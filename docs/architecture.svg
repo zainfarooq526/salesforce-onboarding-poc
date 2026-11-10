@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 600" width="1040" height="600" font-family="Inter, Segoe UI, Helvetica, Arial, sans-serif" xmlns:c2pa="http://c2pa.org/manifest">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5d6b7e"/>
+    </marker>
+    <style>
+      .box { fill: #ffffff; stroke: #d5dce6; stroke-width: 1.5; }
+      .zone { fill: #f4f6fa; stroke: #e3e8ef; stroke-width: 1; }
+      .title { font-size: 15px; font-weight: 700; fill: #16202f; }
+      .sub { font-size: 12px; fill: #5d6b7e; }
+      .step { fill: #e8f2fd; stroke: #b9d6f5; stroke-width: 1; }
+      .steptext { font-size: 12.5px; font-weight: 600; fill: #0b4f96; }
+      .req { font-size: 10.5px; font-weight: 700; fill: #ffffff; }
+      .reqdot { fill: #5b4fd6; }
+      .edge { stroke: #5d6b7e; stroke-width: 1.5; fill: none; }
+      .label { font-size: 11.5px; fill: #3a4656; }
+      .zonelabel { font-size: 11px; font-weight: 700; fill: #8d9aab; letter-spacing: 0.08em; }
+    </style>
+  </defs>
+
+  <rect width="1040" height="600" fill="#ffffff"/>
+  <text x="32" y="38" font-size="20" font-weight="700" fill="#16202f">Salesforce Lead Onboarding POC: architecture</text>
+  <text x="32" y="60" class="sub">Purple tags R1–R5 link each component to the requirement it delivers (see docs/demo-script.md)</text>
+
+  <!-- Zones -->
+  <rect x="24" y="84" width="220" height="490" rx="14" class="zone"/>
+  <text x="40" y="106" class="zonelabel">BROWSER</text>
+  <rect x="268" y="84" width="470" height="490" rx="14" class="zone"/>
+  <text x="284" y="106" class="zonelabel">BACKEND (DOCKER)</text>
+  <rect x="762" y="84" width="254" height="490" rx="14" class="zone"/>
+  <text x="778" y="106" class="zonelabel">SALESFORCE ORG</text>
+
+  <!-- React SPA -->
+  <rect x="40" y="122" width="188" height="300" rx="10" class="box"/>
+  <text x="56" y="148" class="title">React SPA</text>
+  <text x="56" y="166" class="sub">Vite · 4-step wizard</text>
+  <rect x="56" y="182" width="156" height="34" rx="7" class="step"/><text x="68" y="204" class="steptext">1 Upload CSV</text>
+  <rect x="56" y="226" width="156" height="34" rx="7" class="step"/><text x="68" y="248" class="steptext">2 Map fields</text>
+  <rect x="56" y="270" width="156" height="34" rx="7" class="step"/><text x="68" y="292" class="steptext">3 Review &amp; dedupe</text>
+  <rect x="56" y="314" width="156" height="34" rx="7" class="step"/><text x="68" y="336" class="steptext">4 Sync results</text>
+  <text x="56" y="376" class="sub">Exceptions CSV download</text>
+  <text x="56" y="394" class="sub">Import history</text>
+
+  <!-- Flask API -->
+  <rect x="284" y="122" width="438" height="60" rx="10" class="box"/>
+  <text x="300" y="148" class="title">Flask REST API</text>
+  <text x="300" y="168" class="sub">/api/imports · /mapping · /records · /sync · /errors.csv · /health</text>
+
+  <!-- Pipeline -->
+  <rect x="284" y="200" width="438" height="222" rx="10" class="box"/>
+  <text x="300" y="226" class="title">Import pipeline</text>
+  <rect x="300" y="240" width="200" height="34" rx="7" class="step"/><text x="312" y="262" class="steptext">Parse CSV, detect format</text>
+  <rect x="300" y="284" width="200" height="34" rx="7" class="step"/><text x="312" y="306" class="steptext">Auto-map headers → fields</text>
+  <rect x="300" y="328" width="200" height="34" rx="7" class="step"/><text x="312" y="350" class="steptext">Normalize + validate</text>
+  <rect x="510" y="240" width="196" height="34" rx="7" class="step"/><text x="522" y="262" class="steptext">Dedupe + merge in file</text>
+  <rect x="510" y="284" width="196" height="34" rx="7" class="step"/><text x="522" y="306" class="steptext">Match existing Leads</text>
+  <rect x="510" y="328" width="196" height="34" rx="7" class="step"/><text x="522" y="350" class="steptext">Create / update in batches</text>
+  <text x="300" y="396" class="sub">Each row keeps raw data, cleaned data, status, errors,</text>
+  <text x="300" y="412" class="sub">duplicate link and Salesforce Id for a full audit trail.</text>
+
+  <!-- Postgres -->
+  <rect x="284" y="446" width="438" height="112" rx="10" class="box"/>
+  <text x="300" y="472" class="title">PostgreSQL</text>
+  <text x="300" y="492" class="sub">import_jobs: file, mapping, counts, status, timestamps</text>
+  <text x="300" y="510" class="sub">staged_records: raw JSONB, mapped JSONB, status, errors,</text>
+  <text x="300" y="528" class="sub">warnings, duplicate_of, merged_from, sf_id, sf_action</text>
+  <text x="300" y="546" class="sub">(SQLite fallback for quick local runs)</text>
+
+  <!-- Salesforce -->
+  <rect x="778" y="122" width="222" height="96" rx="10" class="box"/>
+  <text x="794" y="148" class="title">OAuth 2.0</text>
+  <text x="794" y="168" class="sub">Connected App,</text>
+  <text x="794" y="184" class="sub">client-credentials flow</text>
+  <text x="794" y="200" class="sub">/services/oauth2/token</text>
+
+  <rect x="778" y="240" width="222" height="182" rx="10" class="box"/>
+  <text x="794" y="266" class="title">REST API v61.0</text>
+  <text x="794" y="290" class="label">GET  /query  (SOQL)</text>
+  <text x="794" y="306" class="sub">find Leads by email or</text>
+  <text x="794" y="322" class="sub">name + company</text>
+  <text x="794" y="348" class="label">POST  /composite/sobjects</text>
+  <text x="794" y="364" class="sub">create, 200 per call</text>
+  <text x="794" y="390" class="label">PATCH /composite/sobjects</text>
+  <text x="794" y="406" class="sub">update, 200 per call</text>
+
+  <rect x="778" y="446" width="222" height="112" rx="10" class="box"/>
+  <text x="794" y="472" class="title">Lead object</text>
+  <text x="794" y="492" class="sub">FirstName, LastName*, Email,</text>
+  <text x="794" y="508" class="sub">Phone, Company*, Title, Source,</text>
+  <text x="794" y="524" class="sub">City, State, Country, Website,</text>
+  <text x="794" y="540" class="sub">NumberOfEmployees</text>
+
+  <!-- Edges -->
+  <path d="M228 152 H284" class="edge" marker-end="url(#arrow)"/>
+  <text x="236" y="144" class="label">JSON</text>
+  <path d="M503 182 V200" class="edge" marker-end="url(#arrow)"/>
+  <path d="M503 422 V446" class="edge" marker-end="url(#arrow)"/>
+  <text x="512" y="438" class="label">staged rows</text>
+  <path d="M722 170 H750 V160 H778" class="edge" marker-end="url(#arrow)"/>
+  <text x="726" y="162" class="label">token</text>
+  <path d="M706 301 H778" class="edge" marker-end="url(#arrow)"/>
+  <path d="M706 345 H778" class="edge" marker-end="url(#arrow)"/>
+  <path d="M889 422 V446" class="edge" marker-end="url(#arrow)"/>
+
+  <!-- Requirement tags -->
+  <g><circle cx="228" cy="199" r="11" class="reqdot"/><text x="221" y="203" class="req">R1</text></g>
+  <g><circle cx="500" cy="301" r="11" class="reqdot"/><text x="493" y="305" class="req">R2</text></g>
+  <g><circle cx="500" cy="345" r="11" class="reqdot"/><text x="493" y="349" class="req">R3</text></g>
+  <g><circle cx="706" cy="257" r="11" class="reqdot"/><text x="699" y="261" class="req">R4</text></g>
+  <g><circle cx="1000" cy="257" r="11" class="reqdot"/><text x="993" y="261" class="req">R5</text></g>
+<metadata><c2pa:manifest>AAAWgmp1bWIAAAAeanVtZGMycGEAEQAQgAAAqgA4m3EDYzJwYQAAABZcanVtYgAAAEdqdW1kYzJtYQARABCAAACqADibcQN1cm46YzJwYTo3YmFhMDdmYi1kMDM3LTQ1NzItYmQ3ZC02NjdlODIyZjk4ZmMAAAADl2p1bWIAAAApanVtZGMyYXMAEQAQgAAAqgA4m3EDYzJwYS5hc3NlcnRpb25zAAAAALxqdW1iAAAARGp1bWRjYm9yABEAEIAAAKoAOJtxE2MycGEuaW5ncmVkaWVudC52MwAAAAAYYzJzaMEXwE8KJxneLzbfWIEqA5kAAABwY2JvcqNpZGM6Zm9ybWF0bWltYWdlL3N2Zyt4bWxqaW5zdGFuY2VJRHgseG1wOmlpZDo1NmViYWJkNC00ODM5LTQwNTAtOTAzNi1lYmUwOTFkNWFlZmJscmVsYXRpb25zaGlwaHBhcmVudE9mAAAB4mp1bWIAAABBanVtZGNib3IAEQAQgAAAqgA4m3ETYzJwYS5hY3Rpb25zLnYyAAAAABhjMnNoGLnDSuFBHKuueb8XmJIQ2wAAAZljYm9yomdhY3Rpb25zgqJmYWN0aW9ua2MycGEub3BlbmVkanBhcmFtZXRlcnOha2luZ3JlZGllbnRzgaJjdXJseC1zZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmluZ3JlZGllbnQudjNkaGFzaFggY3X4ycwJKg0BI3B6uyTw1/AptTZapQC2x9+L9+TXZaSkZmFjdGlvbngdY29tLmFudGhyb3BpYy5jbGF1ZGUucHJvdmlkZWRqcGFyYW1ldGVyc6F4H2NvbS5hbnRocm9waWMub3JpZ2luLWNvbmZpZGVuY2VndW5rbm93bmtkZXNjcmlwdGlvbnhmQ2xhdWRlIHByb3ZpZGVkIHRoaXMgZmlsZSBhdCB0aGUgcmVxdWVzdCBvZiBhIHVzZXIgYW5kIG1heSBoYXZlIGNyZWF0ZWQgb3IgbW9kaWZpZWQgdGhlIGZpbGUgY29udGVudHMubXNvZnR3YXJlQWdlbnShZG5hbWVmQ2xhdWRlcmFsbEFjdGlvbnNJbmNsdWRlZPUAAADIanVtYgAAAEBqdW1kY2JvcgARABCAAACqADibcRNjMnBhLmhhc2guZGF0YQAAAAAYYzJzaOj0bDyqd2uDbIsT1judNcYAAACAY2JvcqVjYWxnZnNoYTI1NmNwYWRMAAAAAAAAAAAAAAAAZGhhc2hYIPvov/o5w9hOdsikMAleWM5nvj/f1PTKRQog4dq9jGCOZG5hbWVuanVtYmYgbWFuaWZlc3RqZXhjbHVzaW9uc4GiZXN0YXJ0GRw1Zmxlbmd0aBkeBAAAAj5qdW1iAAAAJ2p1bWRjMmNsABEAEIAAAKoAOJtxA2MycGEuY2xhaW0udjIAAAACD2Nib3KlY2FsZ2ZzaGEyNTZpc2lnbmF0dXJleE1zZWxmI2p1bWJmPS9jMnBhL3VybjpjMnBhOjdiYWEwN2ZiLWQwMzctNDU3Mi1iZDdkLTY2N2U4MjJmOThmYy9jMnBhLnNpZ25hdHVyZWppbnN0YW5jZUlEeCx4bXA6aWlkOmVmNTdlYWEyLTQwZWQtNDQ5OS1iYTQ3LTAwMDgxOGVkYThhNHJjcmVhdGVkX2Fzc2VydGlvbnODomN1cmx4LXNlbGYjanVtYmY9YzJwYS5hc3NlcnRpb25zL2MycGEuaW5ncmVkaWVudC52M2RoYXNoWCBjdfjJzAkqDQEjcHq7JPDX8Cm1NlqlALbH34v35NdlpKJjdXJseCpzZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmFjdGlvbnMudjJkaGFzaFggGkxpFPKmkUYbN2Gbu2bpIK6pChuJ9DFeqUIAO7hPzGOiY3VybHgpc2VsZiNqdW1iZj1jMnBhLmFzc2VydGlvbnMvYzJwYS5oYXNoLmRhdGFkaGFzaFggOtJmnZq7IUESGPkY2Qtt31jwRyzwlzmnr/ATF/B6v8V0Y2xhaW1fZ2VuZXJhdG9yX2luZm+jZG5hbWVvQW50aHJvcGljIEZpbGVzZ3ZlcnNpb25lMS4wLjBrc3BlY1ZlcnNpb25lMi40LjAAABA4anVtYgAAAChqdW1kYzJjcwARABCAAACqADibcQNjMnBhLnNpZ25hdHVyZQAAABAIY2JvctKEWQISogEmGCFZAgowggIGMIIBjaADAgECAhRA5aAK7sI50L64g/oGQgU9Z1UTADAKBggqhkjOPQQDAzBJMRcwFQYDVQQKEw5BbnRocm9waWMsIFBCQzEuMCwGA1UEAxMlQW50aHJvcGljIENvbnRlbnQgQ3JlZGVudGlhbHMgUm9vdCBDQTAeFw0yNjA4MDcxODQzNTZaFw0yODA4MDYxOTQzNTZaMEQxFzAVBgNVBAoTDkFudGhyb3BpYywgUEJDMSkwJwYDVQQDEyBBbnRocm9waWMgQ2xhdWRlIENvbnRlbnQgU2lnbmluZzBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABJh6CmvLUBgFFNU0vUKlOVtE6djd17L5SuwX0LemFisBM3dkd/3cyjxFA3Qo5S46fX0/ihY0VZ7mfb9KF703t5OjWDBWMA4GA1UdDwEB/wQEAwIHgDAVBgNVHSUEDjAMBgorBgEEAYPoXgIBMAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAUzlHiBIFOZFsj+OPEz5o+nMHXXMIwCgYIKoZIzj0EAwMDZwAwZAIwMXMdFJ4BetLLVY7ORuE9noqbbAZOZn/aArXyTwFAZfKrPzxF2vPoJNf1+UCdg1XGAjBwX1zd9WGqYkqmL5SFqw1QySjr1zJfpJM9+1rdDwSPLMOPOjKuiXjoU/pUUeG9RwmhY3BhZFkNngAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPZYQOH197aTle5nQHNPCHk28xzQedMyQXd3T8TX3noMM2eisMmuRR8gJ7v1zHJBScokMTEuwU1VgwdulWrn8kpLfh0=</c2pa:manifest></metadata></svg>
